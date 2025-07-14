@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andrew Chang 打卡</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background: #f0f2f5;
+      text-align: center;
+    }
+    h2 { color: #2c3e50; }
+    .status { margin-top: 1.5em; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <h2>📍 Andrew Chang 移動打卡</h2>
+  <p class="status" id="status">⏳ 正在取得 GPS 位置...</p>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+
+    const API_URL = "https://script.google.com/macros/s/AKfycbxxrwfQgQFUevGT_kpQodLgTgFg0vIc9DO4kM9PslQwhvDHWJr1rw4wALjq9Fz5tgi4/exec";
+    const USER = "Andrew Chang";
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const url = `${API_URL}?lat=${lat}&lng=${lng}&user=${encodeURIComponent(USER)}`;
+
+          fetch(url)
+            .then(response => response.text())
+            .then(result => {
+              document.getElementById("status").textContent = `✅ 打卡成功！\n📍 緯度：${lat.toFixed(6)} 經度：${lng.toFixed(6)}\n🕒 ${new Date().toLocaleString()}`;
+            })
+            .catch(err => {
+              document.getElementById("status").textContent = "❌ 發送失敗：" + err;
+            });
+        },
+        err => {
+          document.getElementById("status").textContent = "❌ 無法取得 GPS：" + err.message;
+        }
+      );
+    } else {
+      document.getElementById("status").textContent = "❌ 此裝置不支援 GPS";
+    }
+  </script>
+</body>
+</html>
