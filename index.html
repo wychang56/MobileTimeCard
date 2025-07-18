@@ -4,55 +4,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Andrew Chang 打卡</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon-192.png">
+  <title>GPS 打卡系統</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 2em;
-      background: #f0f2f5;
-      text-align: center;
-    }
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f5f7fa; }
     h2 { color: #2c3e50; }
-    .status { margin-top: 1.5em; font-size: 1.2em; }
+    select, button { font-size: 1em; margin: 0.5em 0; padding: 0.5em; width: 100%; max-width: 300px; }
+    .status { margin-top: 1.5em; font-size: 1.1em; }
   </style>
 </head>
 <body>
-  <h2>📍 Andrew Chang 移動打卡</h2>
-  <p class="status" id="status">⏳ 正在取得 GPS 位置...</p>
+  <h2>📍 GPS 打卡系統</h2>
+  <label>打卡人員：</label><br>
+  <select id="name">
+    <option value="Li xiaohua">Li xiaohua</option>
+<option value="Xu gongyun">Xu gongyun</option>
+<option value="Peng guoshun">Peng guoshun</option>
+  </select><br>
+  <label>工作地點：</label><br>
+  <select id="location">
+    <option value="#369 Okuku Aftercare">#369 Okuku Aftercare</option>
+<option value="#367 Panbrook Pharmacy">#367 Panbrook Pharmacy</option>
+<option value="#362 Rehab Lounge">#362 Rehab Lounge</option>
+<option value="#360 BELTLINE">#360 BELTLINE</option>
+<option value="#358 Maulik">#358 Maulik</option>
+<option value="#356 NIWE">#356 NIWE</option>
+  </select><br>
+  <button onclick="checkIn()">Check In</button>
+  <button onclick="checkOut()">Check Out</button>
+  <p class="status" id="status">請選擇打卡方式</p>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-
     const API_URL = "https://script.google.com/macros/s/AKfycbxxrwfQgQFUevGT_kpQodLgTgFg0vIc9DO4kM9PslQwhvDHWJr1rw4wALjq9Fz5tgi4/exec";
-    const USER = "Andrew Chang";
 
-    if ("geolocation" in navigator) {
+    function sendData(type) {
+      document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
+      if (!navigator.geolocation) {
+        document.getElementById('status').textContent = "❌ 此瀏覽器不支援 GPS";
+        return;
+      }
       navigator.geolocation.getCurrentPosition(
         position => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-          const url = `${API_URL}?lat=${lat}&lng=${lng}&user=${encodeURIComponent(USER)}`;
-
-          fetch(url)
-            .then(response => response.text())
-            .then(result => {
-              document.getElementById("status").textContent = `✅ 打卡成功！\n📍 緯度：${lat.toFixed(6)} 經度：${lng.toFixed(6)}\n🕒 ${new Date().toLocaleString()}`;
-            })
-            .catch(err => {
-              document.getElementById("status").textContent = "❌ 發送失敗：" + err;
-            });
+          const name = document.getElementById('name').value;
+          const location = document.getElementById('location').value;
+          const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}`;
+          fetch(url).then(res => res.text()).then(txt => {
+            document.getElementById('status').textContent = txt;
+          }).catch(err => {
+            document.getElementById('status').textContent = "❌ 發送失敗：" + err;
+          });
         },
         err => {
-          document.getElementById("status").textContent = "❌ 無法取得 GPS：" + err.message;
+          document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message;
         }
       );
-    } else {
-      document.getElementById("status").textContent = "❌ 此裝置不支援 GPS";
     }
+    function checkIn() { sendData('checkin'); }
+    function checkOut() { sendData('checkout'); }
   </script>
 </body>
 </html>
