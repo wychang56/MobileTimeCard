@@ -1,6 +1,6 @@
 
 {
-  "name": "Andrew Chang 移動打卡",
+  "name": "GPS 打卡系統",
   "short_name": "打卡",
   "start_url": "index.html",
   "display": "standalone",
