@@ -42,7 +42,7 @@
   <p class="status" id="status">請選擇打卡方式</p>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/NEW_DEPLOYMENT_ID/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxrUrx550OswYtjYHqwdIjrQ5ljlcmN8bL3GIbj7fIAVf44Q-H0Ry3nXoWws24Mvoyr/exec";
 
     function sendData(type) {
       document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
@@ -57,7 +57,7 @@
           const name = document.getElementById('name').value;
           const location = document.getElementById('location').value;
           const note = document.getElementById('note').value;
-          const API_URL = `https://script.google.com/macros/s/AKfycbxrUrx550OswYtjYHqwdIjrQ5ljlcmN8bL3GIbj7fIAVf44Q-H0Ry3nXoWws24Mvoyr/exec`;
+          const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
           fetch(url).then(res => res.text()).then(txt => {
             document.getElementById('status').textContent = txt;
           }).catch(err => {
