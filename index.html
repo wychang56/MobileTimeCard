@@ -5,36 +5,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPS 打卡系統</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4285f4">
   <style>
-    body { font-family: Arial, sans-serif; padding: 2em; background: #f5f7fa; }
+    body { font-family: Arial, sans-serif; padding: 1em; background: #f5f7fa; }
     h2 { color: #2c3e50; }
-    select, button { font-size: 1em; margin: 0.5em 0; padding: 0.5em; width: 100%; max-width: 300px; }
-    .status { margin-top: 1.5em; font-size: 1.1em; }
+    select, button, input { font-size: 1em; margin: 0.5em 0; padding: 0.5em; width: 100%; max-width: 300px; }
+    .status { margin-top: 1em; font-size: 1.1em; }
   </style>
 </head>
 <body>
   <h2>📍 GPS 打卡系統</h2>
   <label>打卡人員：</label><br>
   <select id="name">
-    <option value="Li xiaohua">Li xiaohua</option>
-<option value="Xu gongyun">Xu gongyun</option>
-<option value="Peng guoshun">Peng guoshun</option>
+    <option value="LiXiaoHua">Li Xiao Hua</option>
+    <option value="PengGuoShun">Peng Guo Shun</option>
+    <option value="XuGongYun">Xu Gong Yun</option>
   </select><br>
+
   <label>工作地點：</label><br>
   <select id="location">
     <option value="#369 Okuku Aftercare">#369 Okuku Aftercare</option>
-<option value="#367 Panbrook Pharmacy">#367 Panbrook Pharmacy</option>
-<option value="#362 Rehab Lounge">#362 Rehab Lounge</option>
-<option value="#360 BELTLINE">#360 BELTLINE</option>
-<option value="#358 Maulik">#358 Maulik</option>
-<option value="#356 NIWE">#356 NIWE</option>
+    <option value="#367 Panbrook Pharmacy">#367 Panbrook Pharmacy</option>
+    <option value="#362 Rehab Lounge">#362 Rehab Lounge</option>
+    <option value="#360 BELTLINE">#360 BELTLINE</option>
+    <option value="#358 Maulik">#358 Maulik</option>
+    <option value="#356 NIWE">#356 NIWE</option>
   </select><br>
+
+  <label>備註 (Note)：</label><br>
+  <input type="text" id="note" placeholder="如需手動修改，請輸入原因"><br>
+
   <button onclick="checkIn()">Check In</button>
   <button onclick="checkOut()">Check Out</button>
+  <button onclick="manualEntry()">Manual Entry</button>
   <p class="status" id="status">請選擇打卡方式</p>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyY2pd8AydJ3JWXGxiKEUDq1-INF_tepECuePT-9KVgg7bv6vdpGuD707lO8t-xnZzz/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxxrwfQgQFUevGT_kpQodLgTgFg0vIc9DO4kM9PslQwhvDHWJr1rw4wALjq9Fz5tgi4/exec";
 
     function sendData(type) {
       document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
@@ -48,7 +56,8 @@
           const lng = position.coords.longitude;
           const name = document.getElementById('name').value;
           const location = document.getElementById('location').value;
-          const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}`;
+          const note = document.getElementById('note').value;
+          const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
           fetch(url).then(res => res.text()).then(txt => {
             document.getElementById('status').textContent = txt;
           }).catch(err => {
@@ -62,6 +71,7 @@
     }
     function checkIn() { sendData('checkin'); }
     function checkOut() { sendData('checkout'); }
+    function manualEntry() { sendData('manual'); }
   </script>
 </body>
 </html>
