@@ -57,7 +57,7 @@
           const name = document.getElementById('name').value;
           const location = document.getElementById('location').value;
           const note = document.getElementById('note').value;
-          const url = `https://script.google.com/macros/s/AKfycbxrUrx550OswYtjYHqwdIjrQ5ljlcmN8bL3GIbj7fIAVf44Q-H0Ry3nXoWws24Mvoyr/exec`;
+          const API_URL = `https://script.google.com/macros/s/AKfycbxrUrx550OswYtjYHqwdIjrQ5ljlcmN8bL3GIbj7fIAVf44Q-H0Ry3nXoWws24Mvoyr/exec`;
           fetch(url).then(res => res.text()).then(txt => {
             document.getElementById('status').textContent = txt;
           }).catch(err => {
