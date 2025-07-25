@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPS 打卡系統</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 1em; background: #f5f7fa; }
-    h2 { color: #2c3e50; }
     select, button, input { font-size: 1em; margin: 0.5em 0; padding: 0.5em; width: 100%; max-width: 300px; }
     .status { margin-top: 1em; font-size: 1.1em; }
   </style>
@@ -25,13 +24,10 @@
     <option value="#369 Okuku Aftercare">#369 Okuku Aftercare</option>
     <option value="#367 Panbrook Pharmacy">#367 Panbrook Pharmacy</option>
     <option value="#362 Rehab Lounge">#362 Rehab Lounge</option>
-    <option value="#360 BELTLINE">#360 BELTLINE</option>
-    <option value="#358 Maulik">#358 Maulik</option>
-    <option value="#356 NIWE">#356 NIWE</option>
   </select><br>
 
   <label>備註 (Note)：</label><br>
-  <input type="text" id="note" placeholder="如需手動修改，請輸入原因"><br>
+  <input type="text" id="note"><br>
 
   <button onclick="checkIn()">Check In</button>
   <button onclick="checkOut()">Check Out</button>
@@ -39,39 +35,29 @@
   <p class="status" id="status">請選擇打卡方式</p>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwCq-kUHFpS4iZ9E5HgeBXmQJ7XpFJ3CHyoMUheHRWqBY8zsBKQMDIsY4YeoxBcrzr8/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbySwOc6cX_2EMtFKH5YU49KYTnGb0e0uP3gpkOfMP9WG6zK-qgSsQPc1dR85nmC55Wi/exec";
 
     function sendData(type) {
       document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
-      if (!navigator.geolocation) {
-        document.getElementById('status').textContent = "❌ 此瀏覽器不支援 GPS";
-        return;
-      }
-
       navigator.geolocation.getCurrentPosition(
-        position => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
+        pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
           const name = document.getElementById('name').value;
           const location = document.getElementById('location').value;
           const note = document.getElementById('note').value;
-          const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
-          console.log("Fetch URL:", url);
-          fetch(url)
-            .then(res => res.json()) // 接收 JSON
-            .then(data => {
-              console.log("伺服器回應:", data.message);
-              document.getElementById('status').textContent = data.message;
-            })
-            .catch(err => {
-              console.error("❌ Fetch 發生錯誤:", err);
-              document.getElementById('status').textContent = "❌ 發送失敗：" + err;
-            });
+          const url = `${API_URL}?callback=handleResponse&name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
+          console.log("JSONP URL:", url);
+          const script = document.createElement('script');
+          script.src = url;
+          document.body.appendChild(script);
         },
-        err => {
-          document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message;
-        }
+        err => { document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message; }
       );
+    }
+
+    function handleResponse(data) {
+      document.getElementById('status').textContent = data.message;
     }
 
     function checkIn() { sendData('checkin'); }
@@ -80,4 +66,5 @@
   </script>
 </body>
 </html>
+
 
