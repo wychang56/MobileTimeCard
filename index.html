@@ -1,70 +1,45 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPS 打卡系統</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 1em; background: #f5f7fa; }
-    select, button, input { font-size: 1em; margin: 0.5em 0; padding: 0.5em; width: 100%; max-width: 300px; }
-    .status { margin-top: 1em; font-size: 1.1em; }
-  </style>
 </head>
 <body>
-  <h2>📍 GPS 打卡系統</h2>
-  <label>打卡人員：</label><br>
-  <select id="name">
-    <option value="LiXiaoHua">Li Xiao Hua</option>
-    <option value="PengGuoShun">Peng Guo Shun</option>
-    <option value="XuGongYun">Xu Gong Yun</option>
-  </select><br>
-
-  <label>工作地點：</label><br>
-  <select id="location">
-    <option value="#369 Okuku Aftercare">#369 Okuku Aftercare</option>
-    <option value="#367 Panbrook Pharmacy">#367 Panbrook Pharmacy</option>
-    <option value="#362 Rehab Lounge">#362 Rehab Lounge</option>
-  </select><br>
-
-  <label>備註 (Note)：</label><br>
-  <input type="text" id="note"><br>
-
-  <button onclick="checkIn()">Check In</button>
-  <button onclick="checkOut()">Check Out</button>
-  <button onclick="manualEntry()">Manual Entry</button>
-  <p class="status" id="status">請選擇打卡方式</p>
+  <h1>GPS 打卡系統</h1>
+  <label>員工姓名: <input type="text" id="name"></label><br>
+  <label>專案: <input type="text" id="project"></label><br>
+  <button onclick="checkIn()">簽到</button>
+  <button onclick="checkOut()">簽退</button>
+  <div id="result"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbySwOc6cX_2EMtFKH5YU49KYTnGb0e0uP3gpkOfMP9WG6zK-qgSsQPc1dR85nmC55Wi/exec";
+    const API_URL = "https://script.google.com/macros/s/DEPLOYMENT_ID/exec";
 
-    function sendData(type) {
-      document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          const name = document.getElementById('name').value;
-          const location = document.getElementById('location').value;
-          const note = document.getElementById('note').value;
-          const url = `${API_URL}?callback=handleResponse&name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
-          console.log("JSONP URL:", url);
-          const script = document.createElement('script');
-          script.src = url;
-          document.body.appendChild(script);
-        },
-        err => { document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message; }
-      );
+    function checkIn() { getLocation("checkin"); }
+    function checkOut() { getLocation("checkout"); }
+
+    function getLocation(type) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => sendRequest(type, position),
+          error => document.getElementById("result").innerText = "無法取得位置: " + error.message
+        );
+      } else {
+        document.getElementById("result").innerText = "此瀏覽器不支援定位功能。";
+      }
     }
 
-    function handleResponse(data) {
-      document.getElementById('status').textContent = data.message;
+    function sendRequest(type, pos) {
+      const name = document.getElementById("name").value;
+      const project = document.getElementById("project").value;
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const url = `${API_URL}?name=${encodeURIComponent(name)}&project=${encodeURIComponent(project)}&lat=${lat}&lng=${lng}&type=${type}`;
+      fetch(url)
+        .then(res => res.text())
+        .then(msg => document.getElementById("result").innerText = msg);
     }
-
-    function checkIn() { sendData('checkin'); }
-    function checkOut() { sendData('checkout'); }
-    function manualEntry() { sendData('manual'); }
   </script>
 </body>
 </html>
-
-
