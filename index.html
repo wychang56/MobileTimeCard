@@ -43,43 +43,43 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxrUrx550OswYtjYHqwdIjrQ5ljlcmN8bL3GIbj7fIAVf44Q-H0Ry3nXoWws24Mvoyr/exec";
-
-    function sendData(type) {
-      document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
-      if (!navigator.geolocation) {
-        document.getElementById('status').textContent = "❌ 此瀏覽器不支援 GPS";
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          const name = document.getElementById('name').value;
-          const location = document.getElementById('location').value;
-          const note = document.getElementById('note').value;
-          const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
-          fetch(url)
-            .then(res => {
-              console.log("✅ Fetch 成功，HTTP 狀態碼:", res.status);  // 200 表示 OK
-              if (!res.ok) {
-                throw new Error(`伺服器返回錯誤狀態碼: ${res.status}`);
-              }
-              return res.text();
-            })
-            .then(txt => {
-              console.log("📦 伺服器回應內容:", txt);
-              document.getElementById('status').textContent = txt;
-            })
-            .catch(err => {
-              console.error("❌ Fetch 發生錯誤:", err);
-              document.getElementById('status').textContent = "❌ 發送失敗：" + err;
-            });
-
-            err => {
-          document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message;
-        }
-      );
+function sendData(type) {
+  document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
+  if (!navigator.geolocation) {
+    document.getElementById('status').textContent = "❌ 此瀏覽器不支援 GPS";
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const name = document.getElementById('name').value;
+      const location = document.getElementById('location').value;
+      const note = document.getElementById('note').value;
+      const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
+      fetch(url)
+        .then(res => {
+          console.log("✅ Fetch 成功，HTTP 狀態碼:", res.status);
+          if (!res.ok) {
+            throw new Error(`伺服器返回錯誤狀態碼: ${res.status}`);
+          }
+          return res.text();
+        })
+        .then(txt => {
+          console.log("📦 伺服器回應內容:", txt);
+          document.getElementById('status').textContent = txt;
+        })
+        .catch(err => {
+          console.error("❌ Fetch 發生錯誤:", err);
+          document.getElementById('status').textContent = "❌ 發送失敗：" + err;
+        });
+    },
+    err => {
+      document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message;
     }
+  );
+}
+
     function checkIn() { sendData('checkin'); }
     function checkOut() { sendData('checkout'); }
     function manualEntry() { sendData('manual'); }
