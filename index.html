@@ -7,14 +7,55 @@
 </head>
 <body>
   <h1>GPS 打卡系統</h1>
-  <label>員工姓名: <input type="text" id="name"></label><br>
-  <label>專案: <input type="text" id="project"></label><br>
+  
+  <label>員工姓名: 
+    <select id="name"></select>
+  </label><br>
+  
+  <label>專案: 
+    <select id="project"></select>
+  </label><br>
+  
   <button onclick="checkIn()">簽到</button>
   <button onclick="checkOut()">簽退</button>
   <div id="result"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxtgbeOFyKJszghsp2-m-W1TPgnaF_9mW-Chr7xMcj2faHC6hnVITMYy5im7lXFLkhX/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxO8ATafbbEnN-cDHd59gL4iufS-LkB_QuIKU_ZzYAWbY9tFGUB0L5Ib7koaI1oy0KS/exec";
+
+    // 初始化下拉選單
+    document.addEventListener("DOMContentLoaded", loadProjects);
+
+    function loadProjects() {
+      fetch(`${API_URL}?action=getProjects`)
+        .then(res => res.json())
+        .then(data => {
+          const staffSet = new Set();
+          const projectSet = new Set();
+
+          data.forEach(item => {
+            staffSet.add(item.staff);
+            projectSet.add(item.project);
+          });
+
+          const staffSelect = document.getElementById("name");
+          const projectSelect = document.getElementById("project");
+
+          staffSet.forEach(staff => {
+            const option = document.createElement("option");
+            option.value = staff;
+            option.textContent = staff;
+            staffSelect.appendChild(option);
+          });
+
+          projectSet.forEach(proj => {
+            const option = document.createElement("option");
+            option.value = proj;
+            option.textContent = proj;
+            projectSelect.appendChild(option);
+          });
+        });
+    }
 
     function checkIn() { getLocation("checkin"); }
     function checkOut() { getLocation("checkout"); }
@@ -36,6 +77,7 @@
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       const url = `${API_URL}?name=${encodeURIComponent(name)}&project=${encodeURIComponent(project)}&lat=${lat}&lng=${lng}&type=${type}`;
+
       fetch(url)
         .then(res => res.text())
         .then(msg => document.getElementById("result").innerText = msg);
@@ -43,3 +85,4 @@
   </script>
 </body>
 </html>
+
