@@ -1,12 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPS 打卡系統</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4285f4">
   <style>
     body { font-family: Arial, sans-serif; padding: 1em; background: #f5f7fa; }
     h2 { color: #2c3e50; }
@@ -42,43 +39,40 @@
   <p class="status" id="status">請選擇打卡方式</p>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxrUrx550OswYtjYHqwdIjrQ5ljlcmN8bL3GIbj7fIAVf44Q-H0Ry3nXoWws24Mvoyr/exec";
-function sendData(type) {
-  document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
-  if (!navigator.geolocation) {
-    document.getElementById('status').textContent = "❌ 此瀏覽器不支援 GPS";
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const name = document.getElementById('name').value;
-      const location = document.getElementById('location').value;
-      const note = document.getElementById('note').value;
-      const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
-      fetch(url)
-        .then(res => {
-          console.log("✅ Fetch 成功，HTTP 狀態碼:", res.status);
-          if (!res.ok) {
-            throw new Error(`伺服器返回錯誤狀態碼: ${res.status}`);
-          }
-          return res.text();
-        })
-        .then(txt => {
-          console.log("📦 伺服器回應內容:", txt);
-          document.getElementById('status').textContent = txt;
-        })
-        .catch(err => {
-          console.error("❌ Fetch 發生錯誤:", err);
-          document.getElementById('status').textContent = "❌ 發送失敗：" + err;
-        });
-    },
-    err => {
-      document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message;
+    const API_URL = "https://script.google.com/macros/s/AKfycbwg_Mztys2ug3Bp8LFXCUBPISAyC4hCoSw8zEWUXnlyKJqmkyvQctJ6pVa7GRwceTVH/exec";
+
+    function sendData(type) {
+      document.getElementById('status').textContent = "⏳ 正在取得 GPS 位置...";
+      if (!navigator.geolocation) {
+        document.getElementById('status').textContent = "❌ 此瀏覽器不支援 GPS";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const name = document.getElementById('name').value;
+          const location = document.getElementById('location').value;
+          const note = document.getElementById('note').value;
+          const url = `${API_URL}?name=${encodeURIComponent(name)}&location=${encodeURIComponent(location)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
+          console.log("Fetch URL:", url);
+          fetch(url)
+            .then(res => res.json()) // 接收 JSON
+            .then(data => {
+              console.log("伺服器回應:", data.message);
+              document.getElementById('status').textContent = data.message;
+            })
+            .catch(err => {
+              console.error("❌ Fetch 發生錯誤:", err);
+              document.getElementById('status').textContent = "❌ 發送失敗：" + err;
+            });
+        },
+        err => {
+          document.getElementById('status').textContent = "❌ 無法取得 GPS：" + err.message;
+        }
+      );
     }
-  );
-}
 
     function checkIn() { sendData('checkin'); }
     function checkOut() { sendData('checkout'); }
@@ -86,3 +80,4 @@ function sendData(type) {
   </script>
 </body>
 </html>
+
