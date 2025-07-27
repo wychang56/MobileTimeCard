@@ -5,21 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>打卡系統</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
     .title-container {
       text-align: center;
       font-weight: bold;
-      font-size: 1.2rem;
-      line-height: 1.4;
-    }
-    .subtitle {
-      display: block;
-      font-size: 1.2rem;
-      margin: 4px 0;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
     }
     label {
       display: block;
-      margin-bottom: 8px;
+      margin: 10px 0;
       font-size: 1.2em;
+    }
+    select, textarea {
+      font-size: 1em;
+      padding: 5px;
+      width: 95%;
+      margin-top: 5px;
     }
     button {
       background-color: #ccc;
@@ -28,23 +33,13 @@
       padding: 0.5em 1em;
       font-size: 1.2em;
       cursor: pointer;
-      margin-right: 10px;
+      margin: 5px 10px 5px 0;
     }
     button.active {
       background-color: white;
     }
     button:hover {
       background-color: #aaa;
-    }
-    button:active {
-      background-color: white;
-    }
-    #note {
-      width: 90%;
-      height: 60px;
-      font-size: 1em;
-      margin-top: 10px;
-      padding: 5px;
     }
     #result {
       margin-top: 15px;
@@ -56,7 +51,7 @@
 <body>
   <div class="title-container">
     Make A Change Homes<br>
-    <span class="subtitle">打卡系統</span>
+    <span>打卡系統</span>
   </div>
 
   <!-- 專案清單 -->
@@ -91,7 +86,7 @@
   </label>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyy7mc9cflRN7tNQ6d81NCQdiro3X-OD8wVyVA3IOT29SDGwWojs3Zkm7HVD6P_wWeB/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwgRl5RcGTReWIWPzvL3_ihUly4qaY6bqnIL7kOgF6VOxEsl65saGWMkpdEk6mTK-uf/exec";
 
     function checkIn() { getLocation("checkin"); }
     function checkOut() { getLocation("checkout"); }
@@ -118,30 +113,14 @@
       fetch(url)
         .then(res => res.json())
         .then(data => {
-          if (data.status === "needCheckIn") {
-            document.getElementById("result").innerText = 
-              `⚠ 沒有前一筆簽到資料的簽退！\n請填寫補簽時間與專案。\n簽退時間：${data.time}`;
-          } else if (data.status === "needCheckOut") {
-            document.getElementById("result").innerText = 
-              `⚠ 沒有前一筆簽退的簽到資料！\n請補填前一筆簽退時間。\n上一筆簽到時間：${data.lastCheckIn}`;
-          } else {
-            document.getElementById("result").innerText = data.message || "打卡成功";
-          }
+          document.getElementById("result").innerText = data.message || "打卡成功";
         })
         .catch(err => {
           document.getElementById("result").innerText = "請求失敗: " + err.message;
         });
     }
-
-    // 按鈕變白
-    const buttons = document.querySelectorAll("button");
-    buttons.forEach(btn => {
-      btn.addEventListener("click", function () {
-        buttons.forEach(b => b.classList.remove("active"));
-        this.classList.add("active");
-      });
-    });
   </script>
 </body>
 </html>
+
 
