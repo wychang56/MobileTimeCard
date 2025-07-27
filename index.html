@@ -59,14 +59,27 @@
     <span class="subtitle">打卡系統</span>
   </div>
 
-  <label>專案: 
-    <select id="project"></select>
+  <!-- 專案清單 -->
+  <label>專案:
+    <select id="project">
+      <option>#369 Okuku Aftercare</option>
+      <option>#367 Panbrook Pharmacy</option>
+      <option>#362 Rehab Lounge</option>
+      <option>#360 BELTLINE</option>
+      <option>#358 Maulik</option>
+      <option>#356 NIWE</option>
+    </select>
   </label>
-  
-  <label>員工姓名: 
-    <select id="name"></select>
+
+  <!-- 員工清單 -->
+  <label>員工姓名:
+    <select id="name">
+      <option>LiXiaoHua</option>
+      <option>PengGuoShun</option>
+      <option>XuCongYun</option>
+    </select>
   </label>
-  
+
   <button onclick="checkIn()">簽到</button>
   <button onclick="checkOut()">簽退</button>
   
@@ -78,36 +91,7 @@
   </label>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzvnd5lq2CrnJmsi8durDrfJaYNdHa9IfVvL-sbbuMzQk5YiHEaEfDb9O2pv5JSbDml/exec";
-    let ratesData = [];
-
-    document.addEventListener("DOMContentLoaded", loadProjects);
-
-    function loadProjects() {
-      fetch(`${API_URL}?action=getProjectAndStaff`)
-        .then(res => res.json())
-        .then(data => {
-          const projectSelect = document.getElementById("project");
-          const staffSelect = document.getElementById("name");
-
-          data.projects.forEach(proj => {
-            const option = document.createElement("option");
-            option.value = proj;
-            option.textContent = proj;
-            projectSelect.appendChild(option);
-          });
-
-          data.staff.forEach(staff => {
-            const option = document.createElement("option");
-            option.value = staff;
-            option.textContent = staff;
-            staffSelect.appendChild(option);
-          });
-
-          ratesData = data.rates;
-        })
-        .catch(err => console.error("專案/員工資料加載失敗：", err));
-    }
+    const API_URL = "https://script.google.com/macros/s/AKfycbyy7mc9cflRN7tNQ6d81NCQdiro3X-OD8wVyVA3IOT29SDGwWojs3Zkm7HVD6P_wWeB/exec";
 
     function checkIn() { getLocation("checkin"); }
     function checkOut() { getLocation("checkout"); }
@@ -134,13 +118,12 @@
       fetch(url)
         .then(res => res.json())
         .then(data => {
-          // API 回傳格式假設：{ status: "needCheckIn", time: "2025-07-27 09:00" }
           if (data.status === "needCheckIn") {
             document.getElementById("result").innerText = 
-              `⚠ 沒有前一筆簽到資料的簽退！\n請在備註輸入框填寫補簽簽到時間與專案。\n系統記錄此簽退時間：${data.time}`;
+              `⚠ 沒有前一筆簽到資料的簽退！\n請填寫補簽時間與專案。\n簽退時間：${data.time}`;
           } else if (data.status === "needCheckOut") {
             document.getElementById("result").innerText = 
-              `⚠ 沒有前一筆簽退的簽到資料！\n請補填前一筆簽退時間於備註框。\n上一筆簽到時間：${data.lastCheckIn}`;
+              `⚠ 沒有前一筆簽退的簽到資料！\n請補填前一筆簽退時間。\n上一筆簽到時間：${data.lastCheckIn}`;
           } else {
             document.getElementById("result").innerText = data.message || "打卡成功";
           }
@@ -161,3 +144,4 @@
   </script>
 </body>
 </html>
+
