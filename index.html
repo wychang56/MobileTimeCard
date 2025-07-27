@@ -25,7 +25,7 @@
       background-color: #ccc;
       color: black;
       border: none;
-      padding: 0.2em 0.3em;
+      padding: 0.5em 1em;
       font-size: 1.2em;
       cursor: pointer;
       margin-right: 10px;
@@ -38,6 +38,18 @@
     }
     button:active {
       background-color: white;
+    }
+    #note {
+      width: 90%;
+      height: 60px;
+      font-size: 1em;
+      margin-top: 10px;
+      padding: 5px;
+    }
+    #result {
+      margin-top: 15px;
+      font-size: 1.1em;
+      color: #333;
     }
   </style>
 </head>
@@ -57,10 +69,16 @@
   
   <button onclick="checkIn()">簽到</button>
   <button onclick="checkOut()">簽退</button>
+  
   <div id="result"></div>
+  
+  <!-- 備註輸入框 -->
+  <label>備註:
+    <textarea id="note" placeholder="若需補簽，請填寫補簽時間與專案"></textarea>
+  </label>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwkxIzw6ofdwfHOyh5thevXtFcyUzyUwXUERkL3YOEm2fdtoJ-a9woxMlIm3vu42dfU/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzvnd5lq2CrnJmsi8durDrfJaYNdHa9IfVvL-sbbuMzQk5YiHEaEfDb9O2pv5JSbDml/exec";
     let ratesData = [];
 
     document.addEventListener("DOMContentLoaded", loadProjects);
@@ -108,15 +126,31 @@
     function sendRequest(type, pos) {
       const name = document.getElementById("name").value;
       const project = document.getElementById("project").value;
+      const note = document.getElementById("note").value;
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
-      const url = `${API_URL}?name=${encodeURIComponent(name)}&project=${encodeURIComponent(project)}&lat=${lat}&lng=${lng}&type=${type}`;
+      const url = `${API_URL}?name=${encodeURIComponent(name)}&project=${encodeURIComponent(project)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
+
       fetch(url)
-        .then(res => res.text())
-        .then(msg => document.getElementById("result").innerText = msg);
+        .then(res => res.json())
+        .then(data => {
+          // API 回傳格式假設：{ status: "needCheckIn", time: "2025-07-27 09:00" }
+          if (data.status === "needCheckIn") {
+            document.getElementById("result").innerText = 
+              `⚠ 沒有前一筆簽到資料的簽退！\n請在備註輸入框填寫補簽簽到時間與專案。\n系統記錄此簽退時間：${data.time}`;
+          } else if (data.status === "needCheckOut") {
+            document.getElementById("result").innerText = 
+              `⚠ 沒有前一筆簽退的簽到資料！\n請補填前一筆簽退時間於備註框。\n上一筆簽到時間：${data.lastCheckIn}`;
+          } else {
+            document.getElementById("result").innerText = data.message || "打卡成功";
+          }
+        })
+        .catch(err => {
+          document.getElementById("result").innerText = "請求失敗: " + err.message;
+        });
     }
 
-    // 按鈕變白的控制
+    // 按鈕變白
     const buttons = document.querySelectorAll("button");
     buttons.forEach(btn => {
       btn.addEventListener("click", function () {
@@ -127,4 +161,3 @@
   </script>
 </body>
 </html>
-
