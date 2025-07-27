@@ -1,60 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>打卡系統</title>
+  <link rel="manifest" href="manifest.json" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .title-container {
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.4rem;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin: 10px 0;
-      font-size: 1.2em;
-    }
-    select, textarea {
-      font-size: 1em;
-      padding: 5px;
-      width: 95%;
-      margin-top: 5px;
-    }
-    button {
-      background-color: #ccc;
-      color: black;
-      border: none;
-      padding: 0.5em 1em;
-      font-size: 1.2em;
-      cursor: pointer;
-      margin: 5px 10px 5px 0;
-    }
-    button.active {
-      background-color: white;
-    }
-    button:hover {
-      background-color: #aaa;
-    }
-    #result {
-      margin-top: 15px;
-      font-size: 1.1em;
-      color: #333;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .title-container { text-align: center; font-weight: bold; font-size: 1.4rem; margin-bottom: 20px; }
+    label { display: block; margin: 10px 0; font-size: 1.2em; }
+    select, textarea { font-size: 1em; padding: 5px; width: 95%; margin-top: 5px; }
+    button { background-color: #ccc; border: none; padding: 0.5em 1em; font-size: 1.2em; cursor: pointer; margin: 5px 10px 5px 0; }
+    button.active { background-color: white; }
+    button:hover { background-color: #aaa; }
+    #result { margin-top: 15px; font-size: 1.1em; color: #333; white-space: pre-line; }
   </style>
 </head>
 <body>
   <div class="title-container">
-    Make A Change Homes<br>
+    Make A Change Homes<br />
     <span>打卡系統</span>
   </div>
 
-  <!-- 專案清單 -->
   <label>專案:
     <select id="project">
       <option>#369 Okuku Aftercare</option>
@@ -66,7 +33,6 @@
     </select>
   </label>
 
-  <!-- 員工清單 -->
   <label>員工姓名:
     <select id="name">
       <option>LiXiaoHua</option>
@@ -75,52 +41,15 @@
     </select>
   </label>
 
-  <button onclick="checkIn()">簽到</button>
-  <button onclick="checkOut()">簽退</button>
-  
+  <button id="checkinBtn">簽到</button>
+  <button id="checkoutBtn">簽退</button>
+
   <div id="result"></div>
-  
-  <!-- 備註輸入框 -->
+
   <label>備註:
     <textarea id="note" placeholder="若需補簽，請填寫補簽時間與專案"></textarea>
   </label>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwgRl5RcGTReWIWPzvL3_ihUly4qaY6bqnIL7kOgF6VOxEsl65saGWMkpdEk6mTK-uf/exec";
-
-    function checkIn() { getLocation("checkin"); }
-    function checkOut() { getLocation("checkout"); }
-
-    function getLocation(type) {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => sendRequest(type, position),
-          error => document.getElementById("result").innerText = "無法取得位置: " + error.message
-        );
-      } else {
-        document.getElementById("result").innerText = "此瀏覽器不支援定位功能。";
-      }
-    }
-
-    function sendRequest(type, pos) {
-      const name = document.getElementById("name").value;
-      const project = document.getElementById("project").value;
-      const note = document.getElementById("note").value;
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      const url = `${API_URL}?name=${encodeURIComponent(name)}&project=${encodeURIComponent(project)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
-
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("result").innerText = data.message || "打卡成功";
-        })
-        .catch(err => {
-          document.getElementById("result").innerText = "請求失敗: " + err.message;
-        });
-    }
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>
-
-

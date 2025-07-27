@@ -1,14 +1,9 @@
 {
-  "name": "GPS 打卡系統",
-  "short_name": "GPS打卡",
+  "name": "打卡系統",
+  "short_name": "打卡",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "description": "GPS 打卡與工時計算",
-  "icons": [{
-    "src": "icon.png",
-    "sizes": "192x192",
-    "type": "image/png"
-  }]
+  "description": "員工簽到簽退打卡系統",
+  "icons": []
 }
