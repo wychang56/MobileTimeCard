@@ -23,14 +23,20 @@
     Make A Change Homes<br>
     <span class="subtitle">打卡系統</span>
   </div>
-  <style>
-    label, button {
-      display: inline-block;      /* 確保 transform 能正確作用 */
-      transform: scale(1.2);      /* 放大 1.2 倍 */
-      transform-origin: left;     /* 放大時從左側開始，不會偏移 */
-      margin: 10px 10px;
-    }
-  </style>
+<style>
+  label {
+    display: block;       /* 每個 label 佔一行 */
+    margin-bottom: 20px;  /* label 和下面元素的間距 */
+    font-size: 1.2em;     /* 放大字體，可選 */
+  }
+
+  button {
+    margin-right: 10px;   /* 按鈕之間的水平間距 */
+    margin-top: 20px;     /* 按鈕與上面元素（員工姓名）間距 */
+    font-size: 1.2em;
+    padding: 0.5em 1em;
+  }
+</style>
   <label>專案: 
     <select id="project"></select>
   </label><br>
