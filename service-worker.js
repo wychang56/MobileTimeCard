@@ -1,6 +1,6 @@
 self.addEventListener('install', function(event) {
   event.waitUntil(
-    caches.open('pwa-clockin-v1').then(function(cache) {
+    caches.open('pwa-clockin-v2').then(function(cache) {
       return cache.addAll([
         '/',
         '/index.html',

@@ -1,7 +1,8 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbypnBZnL8nKSqj0SldohovfR4T8lJsVQX1tRf1WjJe_eeadihKB1KuhWmLuasWrajaG/exec";
+const API_URL = "https://script.google.com/macros/s/你的AppsScriptID/exec";
 
 document.getElementById("checkinBtn").addEventListener("click", () => getLocation("checkin"));
 document.getElementById("checkoutBtn").addEventListener("click", () => getLocation("checkout"));
+document.getElementById("noteBtn").addEventListener("click", sendNote);
 
 function getLocation(type) {
   if (navigator.geolocation) {
@@ -43,11 +44,30 @@ function sendRequest(type, pos) {
     });
 }
 
+function sendNote() {
+  const name = document.getElementById("name").value;
+  const note = document.getElementById("note").value;
+
+  if (!note.trim()) {
+    showResult("⚠ 請輸入備註內容再提交！");
+    return;
+  }
+
+  const url = `${API_URL}?name=${encodeURIComponent(name)}&type=note&note=${encodeURIComponent(note)}`;
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      showResult(data.message || "備註已更新");
+    })
+    .catch(err => {
+      showResult("備註更新失敗: " + err.message);
+    });
+}
+
 function showResult(msg) {
   document.getElementById("result").innerText = msg;
 }
 
-// 註冊 service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
