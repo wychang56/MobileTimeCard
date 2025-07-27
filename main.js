@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/你的AppsScriptID/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbypnBZnL8nKSqj0SldohovfR4T8lJsVQX1tRf1WjJe_eeadihKB1KuhWmLuasWrajaG/exec";
 
 document.getElementById("checkinBtn").addEventListener("click", () => getLocation("checkin"));
 document.getElementById("checkoutBtn").addEventListener("click", () => getLocation("checkout"));
