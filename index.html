@@ -16,49 +16,47 @@
       font-size: 1.2rem;
       margin: 4px 0;
     }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.2em;
+    }
+    button {
+      background-color: #ccc;
+      color: black;
+      border: none;
+      padding: 0.5em 1em;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button.active {
+      background-color: white;
+    }
+    button:hover {
+      background-color: #aaa;
+    }
+    button:active {
+      background-color: white;
+    }
   </style>
 </head>
 <body>
-   <div class="title-container">
+  <div class="title-container">
     Make A Change Homes<br>
     <span class="subtitle">打卡系統</span>
   </div>
-<style>
-  label {
-    display: block;       /* 每個 label 佔一行 */
-    margin-bottom: 2px;  /* label 和下面元素的間距 */
-    font-size: 1.2em;     /* 放大字體，可選 */
-  }
-  button {
-    background-color: #ccc; /* 預設灰色 */
-    color: black;
-    border: none;
-    padding: 0.5em 1em;
-    font-size: 1.2em;
-    cursor: pointer;
-    margin-right: 10px;
-  }
-  button.active {
-    background-color: white; /* 按下後保持白色 */
-  }
-  button:hover {
-    background-color: #aaa; /* 滑過時變深灰 */
-  }
-button:active {
-  background-color: white; /* 按下時變白色 */
-}ing: 0.2em 0.3em;
-  }
-</style>
+
   <label>專案: 
     <select id="project"></select>
-  </label><br>
+  </label>
   
   <label>員工姓名: 
     <select id="name"></select>
-  </label><br>
+  </label>
   
-  <button>簽到</button>
-  <button>簽退</button>
+  <button onclick="checkIn()">簽到</button>
+  <button onclick="checkOut()">簽退</button>
   <div id="result"></div>
 
   <script>
@@ -89,7 +87,8 @@ button:active {
           });
 
           ratesData = data.rates;
-        });
+        })
+        .catch(err => console.error("專案/員工資料加載失敗：", err));
     }
 
     function checkIn() { getLocation("checkin"); }
@@ -117,17 +116,15 @@ button:active {
         .then(msg => document.getElementById("result").innerText = msg);
     }
 
-   const buttons = document.querySelectorAll("button");
-
+    // 按鈕變白的控制
+    const buttons = document.querySelectorAll("button");
     buttons.forEach(btn => {
       btn.addEventListener("click", function () {
-        // 清除所有按鈕的 active class
         buttons.forEach(b => b.classList.remove("active"));
-        // 設定被點擊的按鈕為白色
         this.classList.add("active");
       });
     });
-    }
   </script>
 </body>
 </html>
+
