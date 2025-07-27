@@ -26,14 +26,14 @@
 <style>
   label {
     display: block;       /* 每個 label 佔一行 */
-    margin-bottom: 3px;  /* label 和下面元素的間距 */
+    margin-bottom: 2px;  /* label 和下面元素的間距 */
     font-size: 1.2em;     /* 放大字體，可選 */
   }
 button {
   background-color: #ccc; /* 預設灰色 */
   color: black;           /* 文字顏色 */
   border: none;
-  padding: 0.5em 1em;
+  padding: 0.2em 0.3em;
   cursor: pointer;
 }
 button:active {
@@ -49,8 +49,8 @@ button:active {
     <select id="name"></select>
   </label><br>
   
-  <button onclick="checkIn()">簽到</button>
-  <button onclick="checkOut()">簽退</button>
+  <button onclick="setActive(this)">簽到</button>
+  <button onclick="setActive(this)">簽退</button>
   <div id="result"></div>
 
   <script>
@@ -107,6 +107,13 @@ button:active {
       fetch(url)
         .then(res => res.text())
         .then(msg => document.getElementById("result").innerText = msg);
+    }
+
+    function setActive(btn) {
+      // 先移除所有按鈕的 active 類
+      document.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      // 將當前按下的按鈕變成白色
+      btn.classList.add("active");
     }
   </script>
 </body>
