@@ -23,7 +23,14 @@
     Make A Change Homes<br>
     <span class="subtitle">打卡系統</span>
   </div>
-  
+  <style>
+    label, button {
+      display: inline-block;      /* 確保 transform 能正確作用 */
+      transform: scale(1.5);      /* 放大 1.5 倍 */
+      transform-origin: left;     /* 放大時從左側開始，不會偏移 */
+      margin: 10px 0;
+    }
+  </style>
   <label>專案: 
     <select id="project"></select>
   </label><br>
