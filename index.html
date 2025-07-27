@@ -29,13 +29,21 @@
     margin-bottom: 2px;  /* label 和下面元素的間距 */
     font-size: 1.2em;     /* 放大字體，可選 */
   }
-button {
-  background-color: #ccc; /* 預設灰色 */
-  color: black;           /* 文字顏色 */
-  border: none;
-  padding: 0.2em 0.3em;
-  cursor: pointer;
-}
+  button {
+    background-color: #ccc; /* 預設灰色 */
+    color: black;
+    border: none;
+    padding: 0.5em 1em;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  button.active {
+    background-color: white; /* 按下後保持白色 */
+  }
+  button:hover {
+    background-color: #aaa; /* 滑過時變深灰 */
+  }
 button:active {
   background-color: white; /* 按下時變白色 */
 }ing: 0.2em 0.3em;
@@ -49,8 +57,8 @@ button:active {
     <select id="name"></select>
   </label><br>
   
-  <button onclick="setActive(this)">簽到</button>
-  <button onclick="setActive(this)">簽退</button>
+  <button>簽到</button>
+  <button>簽退</button>
   <div id="result"></div>
 
   <script>
@@ -109,11 +117,16 @@ button:active {
         .then(msg => document.getElementById("result").innerText = msg);
     }
 
-    function setActive(btn) {
-      // 先移除所有按鈕的 active 類
-      document.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-      // 將當前按下的按鈕變成白色
-      btn.classList.add("active");
+   const buttons = document.querySelectorAll("button");
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", function () {
+        // 清除所有按鈕的 active class
+        buttons.forEach(b => b.classList.remove("active"));
+        // 設定被點擊的按鈕為白色
+        this.classList.add("active");
+      });
+    });
     }
   </script>
 </body>
