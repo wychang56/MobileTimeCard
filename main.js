@@ -1,5 +1,5 @@
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwsCoXl7uzx71oSFHmQJkRVP9gWn6TUpqAx7fKSHnn9_VyNFXdff9boxpE5Jb1h0hQl/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyfDNzAgkxuyK0Fq08ZvZRz5syLsUX4haFSvmroS1qeHLVTB1lU2zYSnuk7U2W2eDD_/exec";
 const nameSelect = document.getElementById("name");
 const noteInput = document.getElementById("note");
 
