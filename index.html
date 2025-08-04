@@ -1,27 +1,22 @@
+
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>打卡系統</title>
-  <link rel="manifest" href="manifest.json" />
+  <meta charset="UTF-8">
+  <title>Make A Change Homes<br>打卡系統</title>
+  <link rel="manifest" href="manifest.json">
+  <script src="main.js" defer></script>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .title-container { text-align: center; font-weight: bold; font-size: 1.4rem; margin-bottom: 20px; }
-    label { display: block; margin: 10px 0; font-size: 1.2em; }
-    select, textarea { font-size: 1em; padding: 5px; width: 95%; margin-top: 5px; }
-    button { background-color: #ccc; border: none; padding: 0.5em 1em; font-size: 1.2em; cursor: pointer; margin: 5px 10px 5px 0; }
-    button.active { background-color: white; }
-    button:hover { background-color: #aaa; }
-    #result { margin-top: 15px; font-size: 1.1em; color: #333; white-space: pre-line; }
+    body { font-family: sans-serif; padding: 1em; }
+    .title { font-size: 1.5em; font-weight: bold; text-align: center; line-height: 1.4; }
+    label, button { font-size: 1.2em; display: block; margin: 0.5em 0; }
+    button { padding: 0.5em 1em; background-color: #ccc; border: none; cursor: pointer; }
+    button.active, button:active { background-color: white; }
+    #weekly { margin-top: 1em; }
   </style>
 </head>
 <body>
-  <div class="title-container">
-    Make A Change Homes<br />
-    <span>打卡系統</span>
-  </div>
-
+  <div class="title">Make A Change Homes<br><span>打卡系統</span></div>
   <label>專案:
     <select id="project">
       <option>#369 Okuku Aftercare</option>
@@ -32,25 +27,15 @@
       <option>#356 NIWE</option>
     </select>
   </label>
-
   <label>員工姓名:
-    <select id="name">
-      <option>LiXiaoHua</option>
-      <option>PengGuoShun</option>
-      <option>XuCongYun</option>
-    </select>
+    <select id="name"></select>
   </label>
-
-  <button id="checkinBtn">簽到</button>
-  <button id="checkoutBtn">簽退</button>
-
+  <button onclick="checkIn()">簽到</button>
+  <button onclick="checkOut()">簽退</button>
+  <button onclick="addNote()">補簽備註</button>
+  <input id="note" placeholder="輸入備註..." style="width: 100%; padding: 0.5em;">
+  <button onclick="showWeekly()">查看本週工時</button>
   <div id="result"></div>
-
-  <label>備註:
-    <textarea id="note" placeholder="請輸入補簽時間或說明"></textarea>
-  </label>
-  <button id="noteBtn">提交備註</button>
-
-  <script src="main.js"></script>
+  <div id="weekly"></div>
 </body>
 </html>

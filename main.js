@@ -1,73 +1,76 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzjasjiZFleXNZKPHdOCGV8DUr04r9x_HiVP7FClJBtsf_nS1wNiwgR-UuK6gUdFI54/exec";
 
-document.getElementById("checkinBtn").addEventListener("click", () => getLocation("checkin"));
-document.getElementById("checkoutBtn").addEventListener("click", () => getLocation("checkout"));
-document.getElementById("noteBtn").addEventListener("click", sendNote);
+const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+const nameSelect = document.getElementById("name");
+const noteInput = document.getElementById("note");
+
+const names = ["LiXiaoHua", "PengGuoShun", "XuCongYun"];
+
+function lockName(name) {
+  localStorage.setItem("lockedName", name);
+  nameSelect.innerHTML = `<option>${name}</option>`;
+  nameSelect.disabled = true;
+}
+function loadNameOptions() {
+  const locked = localStorage.getItem("lockedName");
+  if (locked) {
+    nameSelect.innerHTML = `<option>${locked}</option>`;
+    nameSelect.disabled = true;
+  } else {
+    names.forEach(n => {
+      const opt = document.createElement("option");
+      opt.textContent = n;
+      nameSelect.appendChild(opt);
+    });
+  }
+}
+function checkIn() { getLocation("checkin"); }
+function checkOut() { getLocation("checkout"); }
+function addNote() { sendRequest("note"); }
+function showWeekly() { sendRequest("weekly"); }
 
 function getLocation(type) {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      position => sendRequest(type, position),
-      error => showResult("無法取得位置: " + error.message)
+      pos => sendRequest(type, pos),
+      err => document.getElementById("result").innerText = "無法定位：" + err.message
     );
   } else {
-    showResult("此瀏覽器不支援定位功能。");
+    document.getElementById("result").innerText = "不支援定位";
   }
 }
 
 function sendRequest(type, pos) {
-  const name = document.getElementById("name").value;
-  const project = document.getElementById("project").value;
-  const note = document.getElementById("note").value;
-  const lat = pos.coords.latitude;
-  const lng = pos.coords.longitude;
+  const name = nameSelect.value;
+  if (!name) return alert("請選擇姓名");
+  if (!localStorage.getItem("lockedName")) lockName(name);
 
-  const url = `${API_URL}?name=${encodeURIComponent(name)}&project=${encodeURIComponent(project)}&lat=${lat}&lng=${lng}&type=${type}&note=${encodeURIComponent(note)}`;
-
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "needCheckIn") {
-        showResult(`⚠ 沒有前一筆簽到資料的簽退！\n此簽退時間：${data.time}\n請在備註填寫補簽簽到時間與專案。`);
-      } else if (data.status === "needCheckOut") {
-        showResult(`⚠ 沒有前一筆簽退的簽到資料！\n上一筆簽到時間：${data.lastCheckIn}\n請在備註填寫上一筆簽退時間。`);
-      } else if (data.status === "successCheckIn") {
-        showResult(`簽到成功：${data.time}`);
-      } else if (data.status === "successCheckOut") {
-        showResult(`簽退成功：${data.time}`);
-      } else {
-        showResult(data.message || "打卡完成");
-      }
-    })
-    .catch(err => {
-      showResult("請求失敗: " + err.message);
-    });
-}
-
-function sendNote() {
-  const name = document.getElementById("name").value;
-  const note = document.getElementById("note").value;
-
-  if (!note.trim()) {
-    showResult("⚠ 請輸入備註內容再提交！");
-    return;
+  let lat = "", lng = "";
+  if (pos && pos.coords) {
+    lat = pos.coords.latitude;
+    lng = pos.coords.longitude;
   }
 
-  const url = `${API_URL}?name=${encodeURIComponent(name)}&type=note&note=${encodeURIComponent(note)}`;
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      showResult(data.message || "備註已更新");
-    })
-    .catch(err => {
-      showResult("備註更新失敗: " + err.message);
-    });
+  let url = `${API_URL}?name=${encodeURIComponent(name)}&type=${type}`;
+  if (type === "checkin" || type === "checkout") {
+    url += `&lat=${lat}&lng=${lng}&project=${document.getElementById("project").value}`;
+  }
+  if (type === "note") {
+    const note = noteInput.value.trim();
+    if (!note) return alert("請輸入備註");
+    url += `&note=${encodeURIComponent(note)}`;
+  }
+
+  fetch(url).then(res => res.json()).then(data => {
+    document.getElementById("result").innerText = data.message || "完成";
+    if (type === "weekly" && data.records) {
+      let html = `<h3>本週工時</h3><ul>`;
+      data.records.forEach(r => {
+        html += `<li>${r.date}: ${r.hours} 小時</li>`;
+      });
+      html += `</ul><b>總計: ${data.total} 小時</b>`;
+      document.getElementById("weekly").innerHTML = html;
+    }
+  });
 }
 
-function showResult(msg) {
-  document.getElementById("result").innerText = msg;
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
-}
+window.onload = loadNameOptions;

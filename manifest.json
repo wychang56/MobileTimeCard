@@ -1,9 +1,14 @@
+
 {
   "name": "打卡系統",
-  "short_name": "打卡",
-  "start_url": ".",
+  "short_name": "ClockIn",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "description": "員工簽到簽退打卡系統",
-  "icons": []
+  "theme_color": "#888888",
+  "icons": [{
+    "src": "icon.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
 }
